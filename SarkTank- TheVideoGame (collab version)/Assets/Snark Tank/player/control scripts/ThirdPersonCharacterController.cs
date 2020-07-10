@@ -10,12 +10,23 @@ public class ThirdPersonCharacterController : MonoBehaviour
 	private Animator animator;
 	public CharacterController controller;
 	public Transform cam;
+	
 
+	public float DefaultSpeed = 10f; //this will determine character speed
 	public float Speed; //this will determine character speed
+	public float run;
+	public float croutch;
+	public float croutch_speed_subtract=10;
+	public float croutch_speed_impact;
 	public float turnSmoothTime = 0.1f;
 	float turnSmoothVelocity;
-    private void Start()
+	
+
+	private void Start()
     {
+		Cursor.visible = false;
+		Cursor.lockState = CursorLockMode.Locked;
+
 		//initialize animator
 		animator = GetComponent<Animator>();
     }
@@ -24,6 +35,33 @@ public class ThirdPersonCharacterController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+		//check if shift is pressed
+		if (Input.GetKey(KeyCode.LeftShift))
+		{
+			run = 1;
+			Speed = DefaultSpeed+10- croutch_speed_impact;
+		}
+		else {
+			run = 0;
+			Speed = DefaultSpeed- croutch_speed_impact;
+		}
+
+		//check if shift is pressed
+		if (Input.GetKey(KeyCode.LeftControl))
+		{
+			croutch_speed_impact = croutch_speed_subtract;
+			croutch = 1;
+		}
+		else
+		{
+			croutch_speed_impact = 0;
+			croutch = 0;
+		}
+
+		//apply running animation to shift
+		animator.SetFloat("Running", run);
+		animator.SetFloat("Croutching", croutch);
+
 		//assign movement positions to float variables
 		float hor = Input.GetAxisRaw("Horizontal");
 		float ver = Input.GetAxisRaw("Vertical");
